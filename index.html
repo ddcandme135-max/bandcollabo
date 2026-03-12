@@ -1,38 +1,20 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <title>BandCollab</title>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 
 body{
-font-family: Arial;
+font-family:Arial;
 background:#0a0a0a;
 color:white;
 text-align:center;
-padding:60px;
-}
-
-h1{
-font-size:48px;
-margin-bottom:10px;
-}
-
-button{
-padding:15px 25px;
-margin:10px;
-font-size:16px;
-background:#7c3aed;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
-}
-
-button:hover{
-background:#6d28d9;
+padding:40px;
 }
 
 .container{
@@ -40,7 +22,21 @@ max-width:700px;
 margin:auto;
 }
 
-input, textarea{
+button{
+padding:12px 20px;
+margin:10px;
+border:none;
+border-radius:8px;
+background:#7c3aed;
+color:white;
+cursor:pointer;
+}
+
+button:hover{
+background:#6d28d9;
+}
+
+input,textarea{
 width:100%;
 padding:10px;
 margin:10px 0;
@@ -53,6 +49,7 @@ background:#1a1a1a;
 padding:20px;
 margin-top:15px;
 border-radius:10px;
+text-align:left;
 }
 
 </style>
@@ -64,12 +61,18 @@ border-radius:10px;
 <div class="container">
 
 <h1>BandCollab</h1>
+
 <p>Create music together</p>
 
 <button onclick="login()">Google Login</button>
+
+<p id="userName"></p>
+
+<hr>
+
 <button onclick="showForm()">Upload Project</button>
 
-<div id="projectForm" style="display:none; margin-top:20px;">
+<div id="projectForm" style="display:none">
 
 <input id="title" placeholder="Project title">
 
@@ -79,93 +82,133 @@ border-radius:10px;
 
 </div>
 
-<h2 style="margin-top:40px;">Projects</h2>
+<h2>Projects</h2>
 
 <div id="projects"></div>
 
 </div>
 
+
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js"
 
-import { getAuth, signInWithPopup, GoogleAuthProvider } 
-from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { 
+getAuth,
+signInWithRedirect,
+getRedirectResult,
+GoogleAuthProvider
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js"
 
-import { getFirestore, collection, addDoc, getDocs } 
-from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import {
+getFirestore,
+collection,
+addDoc,
+getDocs
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js"
+
+
 
 const firebaseConfig = {
+
 apiKey: "여기에 API KEY",
+
 authDomain: "bandcollabo-7b0e2.firebaseapp.com",
+
 projectId: "bandcollabo-7b0e2",
+
 storageBucket: "bandcollabo-7b0e2.appspot.com",
+
 messagingSenderId: "286958233959",
+
 appId: "1:286958233959:web:af4a057a5cff4ac5d6e7c2"
-};
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
-
-const db = getFirestore(app);
-
-window.login = function(){
-
-signInWithPopup(auth, provider)
-.then((result) => {
-
-alert("로그인 성공: " + result.user.displayName)
-
-})
 
 }
 
-window.showForm = function(){
+
+
+const app = initializeApp(firebaseConfig)
+
+const auth = getAuth(app)
+
+const provider = new GoogleAuthProvider()
+
+const db = getFirestore(app)
+
+
+
+window.login = function(){
+
+signInWithRedirect(auth, provider)
+
+}
+
+
+
+getRedirectResult(auth).then((result)=>{
+
+if(result){
+
+const user=result.user
+
+document.getElementById("userName").innerText="Logged in: "+user.displayName
+
+}
+
+})
+
+
+
+window.showForm=function(){
 
 document.getElementById("projectForm").style.display="block"
 
 }
 
-window.addProject = async function(){
+
+
+window.addProject=async function(){
 
 let title=document.getElementById("title").value
+
 let description=document.getElementById("description").value
 
-if(title==="") return
+if(title==="")return
 
-await addDoc(collection(db,"Project"),{
+await addDoc(collection(db,"projects"),{
 
-Title:title,
-Description:description,
-Owner:"user",
-createdAt:Date.now()
+title:title,
+
+description:description
 
 })
-
-alert("프로젝트 업로드 완료")
 
 loadProjects()
 
 }
 
+
+
 async function loadProjects(){
 
-const querySnapshot = await getDocs(collection(db,"Project"))
+const querySnapshot=await getDocs(collection(db,"projects"))
 
 document.getElementById("projects").innerHTML=""
 
 querySnapshot.forEach((doc)=>{
 
-const data=doc.data()
+let data=doc.data()
 
 let html=`
 
 <div class="project">
-<h3>${data.Title}</h3>
-<p>${data.Description}</p>
+
+<h3>${data.title}</h3>
+
+<p>${data.description}</p>
+
 <button>Apply</button>
+
 </div>
 
 `
@@ -176,9 +219,12 @@ document.getElementById("projects").innerHTML+=html
 
 }
 
+
+
 loadProjects()
 
 </script>
 
 </body>
+
 </html>
