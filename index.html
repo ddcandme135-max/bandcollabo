@@ -1,224 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-<title>BandCollab</title>
+<title>BandCollab Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-
 body{
+background:#000;
+color:white;
 font-family:Arial;
-background:#0a0a0a;
-color:white;
 text-align:center;
-padding:60px;
+padding:100px;
 }
-
 button{
-padding:12px 20px;
-margin:10px;
-background:#7c3aed;
-border:none;
-border-radius:8px;
-color:white;
-cursor:pointer;
-}
-
-button:hover{
-background:#6d28d9;
-}
-
-.container{
-max-width:700px;
-margin:auto;
-}
-
-.project{
-background:#1a1a1a;
 padding:20px;
-margin-top:15px;
-border-radius:10px;
-text-align:left;
-}
-
-input, textarea{
-width:100%;
-padding:10px;
-margin-top:10px;
-border-radius:6px;
+font-size:20px;
+background:#7c3aed;
+color:white;
 border:none;
+border-radius:10px;
 }
-
 </style>
 
 </head>
 
 <body>
 
-<div class="container">
-
 <h1>BandCollab</h1>
-<p>Create music together</p>
 
-<button id="loginBtn">Google Login</button>
+<button onclick="test()">Test Button</button>
 
-<button id="uploadBtn">Upload Project</button>
+<script>
 
-<div id="projectForm" style="display:none">
-
-<input id="title" placeholder="Project title">
-
-<textarea id="description" placeholder="Project description"></textarea>
-
-<button id="postBtn">Post Project</button>
-
-</div>
-
-<h2 style="margin-top:40px">Projects</h2>
-
-<div id="projects"></div>
-
-</div>
-
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-
-const firebaseConfig = {
-
-apiKey: "여기에 API KEY",
-
-authDomain: "bandcollabo-7b0e2.firebaseapp.com",
-
-projectId: "bandcollabo-7b0e2",
-
-storageBucket: "bandcollabo-7b0e2.appspot.com",
-
-messagingSenderId: "286958233959",
-
-appId: "1:286958233959:web:af4a057a5cff4ac5d6e7c2"
-
-};
-
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-
-const auth = getAuth(app);
-
-const provider = new GoogleAuthProvider();
-
-
-// 로그인 버튼
-
-document.getElementById("loginBtn").addEventListener("click", () => {
-
-signInWithRedirect(auth, provider);
-
-});
-
-
-// 로그인 결과 처리
-
-getRedirectResult(auth)
-
-.then((result)=>{
-
-if(result && result.user){
-
-document.getElementById("loginBtn").innerText =
-"Logged in as " + result.user.displayName;
-
+function test(){
+alert("Button works");
 }
-
-})
-
-.catch((error)=>{
-
-console.log(error);
-
-});
-
-
-// 업로드 폼 열기
-
-document.getElementById("uploadBtn").addEventListener("click", ()=>{
-
-document.getElementById("projectForm").style.display="block";
-
-});
-
-
-// 프로젝트 업로드
-
-document.getElementById("postBtn").addEventListener("click", async ()=>{
-
-let title=document.getElementById("title").value;
-
-let description=document.getElementById("description").value;
-
-if(!title || !description){
-
-alert("Fill all fields");
-
-return;
-
-}
-
-await addDoc(collection(db,"projects"),{
-
-title:title,
-
-description:description
-
-});
-
-location.reload();
-
-});
-
-
-// 프로젝트 목록 불러오기
-
-async function loadProjects(){
-
-const querySnapshot = await getDocs(collection(db,"projects"));
-
-querySnapshot.forEach((doc)=>{
-
-const data=doc.data();
-
-if(!data.title) return;
-
-let html=`
-
-<div class="project">
-
-<h3>${data.title}</h3>
-
-<p>${data.description || ""}</p>
-
-<button>Apply</button>
-
-</div>
-
-`;
-
-document.getElementById("projects").innerHTML+=html;
-
-});
-
-}
-
-loadProjects();
 
 </script>
 
