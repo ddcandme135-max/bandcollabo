@@ -1,15 +1,23 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 <title>BandCollab</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
+
 body{
-font-family: Arial;
+font-family:Arial;
 background:#0a0a0a;
 color:white;
 text-align:center;
-padding:80px;
+padding:60px;
+}
+
+.container{
+max-width:700px;
+margin:auto;
 }
 
 h1{
@@ -25,18 +33,128 @@ background:#7c3aed;
 color:white;
 border:none;
 border-radius:8px;
+cursor:pointer;
 }
+
+button:hover{
+background:#6d28d9;
+}
+
+input,textarea{
+width:100%;
+padding:10px;
+margin:10px 0;
+border-radius:6px;
+border:none;
+}
+
+.project{
+background:#1a1a1a;
+padding:20px;
+margin-top:15px;
+border-radius:10px;
+}
+
 </style>
+
 </head>
 
 <body>
 
-<h1>BandCollab</h1>
+<div class="container">
 
+<h1>BandCollab</h1>
 <p>Create music together</p>
 
-<button>Upload Project</button>
-<button>Find Collaborators</button>
+<button onclick="login()">Google Login</button>
+
+<button onclick="showForm()">Upload Project</button>
+
+<div id="projectForm" style="display:none">
+
+<input id="title" placeholder="Project title">
+
+<textarea id="description" placeholder="Project description"></textarea>
+
+<button onclick="addProject()">Post Project</button>
+
+</div>
+
+<h2>Projects</h2>
+
+<div id="projects"></div>
+
+</div>
+
+<script>
+
+function showForm(){
+document.getElementById("projectForm").style.display="block"
+}
+
+function addProject(){
+
+let title=document.getElementById("title").value
+let description=document.getElementById("description").value
+
+if(title==="") return
+
+let html = `
+<div class="project">
+<h3>${title}</h3>
+<p>${description}</p>
+<button>Apply</button>
+</div>
+`
+
+document.getElementById("projects").innerHTML += html
+
+}
+
+</script>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey:"여기에_API_KEY",
+authDomain:"bandcollabo-7b0e2.firebaseapp.com",
+projectId:"bandcollabo-7b0e2",
+storageBucket:"bandcollabo-7b0e2.appspot.com",
+messagingSenderId:"286958233959",
+appId:"1:286958233959:web:af4a057a5cff4ac5d6e7c2"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const provider = new GoogleAuthProvider();
+
+window.login = function(){
+
+signInWithPopup(auth,provider)
+
+.then((result)=>{
+
+const user=result.user;
+
+alert("로그인 성공: "+user.displayName)
+
+})
+
+.catch((error)=>{
+
+console.log(error)
+
+})
+
+}
+
+</script>
 
 </body>
+
 </html>
