@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
 <title>BandCollab</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <style>
 
 body{
@@ -53,42 +49,20 @@ text-align:left;
 }
 
 </style>
-
 </head>
-
 <body>
-
 <div class="container">
-
 <h1>BandCollab</h1>
-
 <p>Create music together</p>
-
-<button onclick="login()">Google Login</button>
-
 <p id="userName"></p>
-
 <hr>
-
-<button onclick="showForm()">Upload Project</button>
-
 <div id="projectForm" style="display:none">
-
 <input id="title" placeholder="Project title">
-
 <textarea id="description" placeholder="Project description"></textarea>
-
-<button onclick="addProject()">Post Project</button>
-
 </div>
-
 <h2>Projects</h2>
-
 <div id="projects"></div>
-
 </div>
-
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js"
@@ -224,7 +198,6 @@ document.getElementById("projects").innerHTML+=html
 loadProjects()
 
 </script>
-
 </body>
-
 </html>
+:::
