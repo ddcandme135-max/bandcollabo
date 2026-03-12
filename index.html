@@ -3,32 +3,25 @@
 <head>
 
 <title>BandCollab</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 
 body{
-font-family: Arial;
+font-family:Arial;
 background:#0a0a0a;
 color:white;
 text-align:center;
 padding:60px;
 }
 
-h1{
-font-size:48px;
-margin-bottom:10px;
-}
-
 button{
-padding:15px 25px;
+padding:12px 20px;
 margin:10px;
-font-size:16px;
 background:#7c3aed;
-color:white;
 border:none;
 border-radius:8px;
+color:white;
 cursor:pointer;
 }
 
@@ -41,20 +34,20 @@ max-width:700px;
 margin:auto;
 }
 
-input, textarea{
-width:100%;
-padding:10px;
-margin:10px 0;
-border-radius:6px;
-border:none;
-}
-
 .project{
 background:#1a1a1a;
 padding:20px;
 margin-top:15px;
 border-radius:10px;
 text-align:left;
+}
+
+input, textarea{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:6px;
+border:none;
 }
 
 </style>
@@ -66,10 +59,9 @@ text-align:left;
 <div class="container">
 
 <h1>BandCollab</h1>
-
 <p>Create music together</p>
 
-<button onclick="login()">Google Login</button>
+<button id="loginBtn">Google Login</button>
 
 <button onclick="showForm()">Upload Project</button>
 
@@ -95,7 +87,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 
 import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithRedirect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 
 const firebaseConfig = {
@@ -124,23 +116,11 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 
-window.login = function(){
+document.getElementById("loginBtn").onclick = () => {
 
-signInWithPopup(auth, provider)
+signInWithRedirect(auth, provider);
 
-.then((result)=>{
-
-alert("Login success: " + result.user.displayName);
-
-})
-
-.catch((error)=>{
-
-console.log(error);
-
-});
-
-}
+};
 
 
 window.showForm = function(){
@@ -152,12 +132,17 @@ document.getElementById("projectForm").style.display="block"
 
 window.uploadProject = async function(){
 
-let title = document.getElementById("title").value
+let title = document.getElementById("title").value;
 
-let description = document.getElementById("description").value
+let description = document.getElementById("description").value;
 
-if(!title || !description) return
+if(!title || !description){
 
+alert("Fill all fields");
+
+return;
+
+}
 
 await addDoc(collection(db,"projects"),{
 
@@ -165,23 +150,22 @@ title:title,
 
 description:description
 
-})
+});
 
-
-location.reload()
+location.reload();
 
 }
 
 
 async function loadProjects(){
 
-const querySnapshot = await getDocs(collection(db,"projects"))
+const querySnapshot = await getDocs(collection(db,"projects"));
 
 querySnapshot.forEach((doc)=>{
 
-const data = doc.data()
+const data = doc.data();
 
-if(!data.title || !data.description) return
+if(!data.title || !data.description) return;
 
 let projectHTML = `
 
@@ -195,16 +179,15 @@ let projectHTML = `
 
 </div>
 
-`
+`;
 
-document.getElementById("projects").innerHTML += projectHTML
+document.getElementById("projects").innerHTML += projectHTML;
 
-})
+});
 
 }
 
-
-loadProjects()
+loadProjects();
 
 </script>
 
