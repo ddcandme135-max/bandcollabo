@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
 <title>BandCollab</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -13,20 +11,24 @@ background:#0a0a0a;
 color:white;
 font-family:Arial;
 text-align:center;
-padding:80px;
+padding:120px;
 }
 
 button{
-padding:16px 26px;
+padding:16px 28px;
 font-size:18px;
 background:#7c3aed;
 border:none;
 border-radius:10px;
 color:white;
+cursor:pointer;
+}
+
+button:hover{
+background:#6d28d9;
 }
 
 </style>
-
 </head>
 
 <body>
@@ -41,19 +43,12 @@ color:white;
 <script>
 
 const firebaseConfig = {
-
-apiKey: "여기에 API KEY",
-
+apiKey: "AIzaSyD8HH03q2aGp_bQIpeVMutyi7ASxydHpIM",
 authDomain: "bandcollabo-7b0e2.firebaseapp.com",
-
 projectId: "bandcollabo-7b0e2",
-
-storageBucket: "bandcollabo-7b0e2.appspot.com",
-
+storageBucket: "bandcollabo-7b0e2.firebasestorage.app",
 messagingSenderId: "286958233959",
-
 appId: "1:286958233959:web:af4a057a5cff4ac5d6e7c2"
-
 };
 
 firebase.initializeApp(firebaseConfig);
