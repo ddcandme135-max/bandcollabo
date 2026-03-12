@@ -87,7 +87,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 
 import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 
 const firebaseConfig = {
@@ -124,13 +124,27 @@ try{
 
 const result = await signInWithPopup(auth, provider);
 
-alert("Logged in as " + result.user.displayName);
+console.log("Logged in:", result.user);
 
 }catch(error){
 
 console.log(error);
 
 alert("Login failed");
+
+}
+
+});
+
+
+// 로그인 상태 유지
+
+onAuthStateChanged(auth, (user) => {
+
+if(user){
+
+document.getElementById("loginBtn").innerText =
+"Logged in as " + user.displayName;
 
 }
 
