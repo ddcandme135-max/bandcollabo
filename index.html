@@ -61,9 +61,9 @@ border:none;
 <h1>BandCollab</h1>
 <p>Create music together</p>
 
-<button id="loginBtn">Google Login</button>
+<button id="loginBtn" type="button">Google Login</button>
 
-<button onclick="showForm()">Upload Project</button>
+<button id="uploadBtn" type="button">Upload Project</button>
 
 <div id="projectForm" style="display:none">
 
@@ -71,7 +71,7 @@ border:none;
 
 <textarea id="description" placeholder="Project description"></textarea>
 
-<button onclick="uploadProject()">Post Project</button>
+<button id="postBtn" type="button">Post Project</button>
 
 </div>
 
@@ -87,8 +87,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 
 import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import { getAuth, GoogleAuthProvider, signInWithRedirect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
 
@@ -106,56 +105,52 @@ appId: "1:286958233959:web:af4a057a5cff4ac5d6e7c2"
 
 };
 
-
 const app = initializeApp(firebaseConfig);
-
 const db = getFirestore(app);
-
 const auth = getAuth(app);
-
 const provider = new GoogleAuthProvider();
 
+const loginBtn = document.getElementById("loginBtn");
+const uploadBtn = document.getElementById("uploadBtn");
+const postBtn = document.getElementById("postBtn");
+const form = document.getElementById("projectForm");
 
-document.getElementById("loginBtn").onclick = () => {
-
+loginBtn.addEventListener("click", () => {
 signInWithRedirect(auth, provider);
+});
 
-};
-
-
-window.showForm = function(){
-
-document.getElementById("projectForm").style.display="block"
-
+getRedirectResult(auth)
+.then((result)=>{
+if(result && result.user){
+alert("Login success: " + result.user.displayName);
 }
+})
+.catch((error)=>{
+console.log(error);
+});
 
+uploadBtn.addEventListener("click", () => {
+form.style.display="block";
+});
 
-window.uploadProject = async function(){
+postBtn.addEventListener("click", async () => {
 
-let title = document.getElementById("title").value;
-
-let description = document.getElementById("description").value;
+const title=document.getElementById("title").value;
+const description=document.getElementById("description").value;
 
 if(!title || !description){
-
 alert("Fill all fields");
-
 return;
-
 }
 
 await addDoc(collection(db,"projects"),{
-
 title:title,
-
 description:description
-
 });
 
 location.reload();
 
-}
-
+});
 
 async function loadProjects(){
 
@@ -165,15 +160,15 @@ querySnapshot.forEach((doc)=>{
 
 const data = doc.data();
 
-if(!data.title || !data.description) return;
+if(!data.title) return;
 
-let projectHTML = `
+let html=`
 
 <div class="project">
 
 <h3>${data.title}</h3>
 
-<p>${data.description}</p>
+<p>${data.description || ""}</p>
 
 <button>Apply</button>
 
@@ -181,7 +176,7 @@ let projectHTML = `
 
 `;
 
-document.getElementById("projects").innerHTML += projectHTML;
+document.getElementById("projects").innerHTML+=html;
 
 });
 
